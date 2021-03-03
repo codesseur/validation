@@ -20,54 +20,54 @@ public class VerifyInstantTest {
 
   @Test
   public void futureIsInTheFuture() {
-    Verify.that(future).is(InTheFuture(Instant::now), invalid("INVALID")).orElseThrow();
+    Validate.that(future).is(InTheFuture(Instant::now), invalid("INVALID")).orElseThrow();
   }
 
   @Test
   public void pastIsInThePast() {
-    Verify.that(past).is(InThePast(Instant::now), invalid("INVALID")).orElseThrow();
+    Validate.that(past).is(InThePast(Instant::now), invalid("INVALID")).orElseThrow();
   }
 
   @Test
   public void nowIsBeforeFuture() {
-    Verify.that(now).is(Before(future), invalid("INVALID")).orElseThrow();
+    Validate.that(now).is(Before(future), invalid("INVALID")).orElseThrow();
   }
 
   @Test
   public void nowIsAfterPast() {
-    Verify.that(now).is(After(past), invalid("INVALID")).orElseThrow();
+    Validate.that(now).is(After(past), invalid("INVALID")).orElseThrow();
   }
 
   @Test
   public void nowIsAtOrBeforeFuture() {
-    Verify.that(now).is(AtOrBefore(future), invalid("INVALID")).orElseThrow();
+    Validate.that(now).is(AtOrBefore(future), invalid("INVALID")).orElseThrow();
   }
 
   @Test
   public void nowIsAtOrAfterPast() {
-    Verify.that(now).is(AtOrAfter(past), invalid("INVALID")).orElseThrow();
+    Validate.that(now).is(AtOrAfter(past), invalid("INVALID")).orElseThrow();
   }
 
   @Test
   public void nowIsAtOrBeforenow() {
-    Verify.that(now).is(AtOrBefore(now), invalid("INVALID")).orElseThrow();
+    Validate.that(now).is(AtOrBefore(now), invalid("INVALID")).orElseThrow();
   }
 
   @Test
   public void nowIsAtOrAfternow() {
-    Verify.that(now).is(AtOrAfter(now), invalid("INVALID")).orElseThrow();
+    Validate.that(now).is(AtOrAfter(now), invalid("INVALID")).orElseThrow();
   }
 
   @Test
   public void nowIsNotBeforePast() {
-    Assertions.assertThatThrownBy(() -> Verify.that(now).is(Before(past), invalid("INVALID"))
+    Assertions.assertThatThrownBy(() -> Validate.that(now).is(Before(past), invalid("INVALID"))
         .orElseThrow())
         .isInstanceOf(RuntimeException.class);
   }
 
   @Test
   public void nowIsNotAfterFuture() {
-    Assertions.assertThatThrownBy(() -> Verify.that(now).is(After(future), invalid("INVALID"))
+    Assertions.assertThatThrownBy(() -> Validate.that(now).is(After(future), invalid("INVALID"))
         .orElseThrow())
         .isInstanceOf(RuntimeException.class);
   }

@@ -10,7 +10,7 @@ public class VerifyComparableTest {
 
   @Test
   public void oneGreaterThanTwo() {
-    Assertions.assertThatThrownBy(() -> Verify.that(1).is(GreaterThan(2), invalid("INVALID"))
+    Assertions.assertThatThrownBy(() -> Validate.that(1).is(GreaterThan(2), invalid("INVALID"))
         .orElseThrow())
         .isInstanceOf(RuntimeException.class);
   }

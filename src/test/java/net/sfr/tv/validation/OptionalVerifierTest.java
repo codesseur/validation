@@ -10,11 +10,11 @@ public class OptionalVerifierTest {
 
   @Test
   public void ifPresentSatisfiesWithMatching() {
-    Verify.that(Optional.of("")).satisfies(IfPresent(String::isEmpty), invalid("")).orElseThrow();
+    Validate.that(Optional.of("")).satisfies(IfPresent(String::isEmpty), invalid("")).orElseThrow();
   }
 
   @Test
   public void ifPresentSatisfiesWithEmpty() {
-    Verify.that(Optional.<String>empty()).satisfies(IfPresent(String::isEmpty), invalid("")).orElseThrow();
+    Validate.that(Optional.<String>empty()).satisfies(IfPresent(String::isEmpty), invalid("")).orElseThrow();
   }
 }

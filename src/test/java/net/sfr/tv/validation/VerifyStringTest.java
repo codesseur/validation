@@ -13,57 +13,57 @@ public class VerifyStringTest {
 
   @Test
   public void notEmptyValidationWithEmptyString() {
-    Assertions.assertThatThrownBy(() -> Verify.that("").is(NotEmpty(), invalid("INVALID")).orElseThrow())
+    Assertions.assertThatThrownBy(() -> Validate.that("").is(NotEmpty(), invalid("INVALID")).orElseThrow())
         .isInstanceOf(RuntimeException.class);
   }
 
   @Test
   public void nonEmptyString() {
-    Verify.that("blabla").is(NotEmpty(), invalid("INVALID")).orElseThrow();
+    Validate.that("blabla").is(NotEmpty(), invalid("INVALID")).orElseThrow();
   }
 
   @Test
   public void blankString() {
-    Assertions.assertThatThrownBy(() -> Verify.that("   ").is(NotBlank(), invalid("INVALID")).orElseThrow())
+    Assertions.assertThatThrownBy(() -> Validate.that("   ").is(NotBlank(), invalid("INVALID")).orElseThrow())
         .isInstanceOf(RuntimeException.class);
   }
 
   @Test
   public void nonBlankString() {
-    Verify.that("blabla").is(NotBlank(), invalid("INVALID")).orElseThrow();
+    Validate.that("blabla").is(NotBlank(), invalid("INVALID")).orElseThrow();
   }
 
   @Test
   public void nonMatchingStringCaseSensitive() {
     Assertions.assertThatThrownBy(
-        () -> Verify.that("blabla").is(MatchCaseSensitive("BLA.*")
+        () -> Validate.that("blabla").is(MatchCaseSensitive("BLA.*")
             , invalid("INVALID")).orElseThrow())
         .isInstanceOf(RuntimeException.class);
   }
 
   @Test
   public void matchingStringCaseSensitive() {
-    Verify.that("blabla").is(MatchCaseSensitive("blabla")
+    Validate.that("blabla").is(MatchCaseSensitive("blabla")
         , invalid("INVALID")).orElseThrow();
   }
 
   @Test
   public void nonMatchingStringCaseInsensitive() {
     Assertions.assertThatThrownBy(
-        () -> Verify.that("blabla").is(MatchCaseInsensitive("m.*")
+        () -> Validate.that("blabla").is(MatchCaseInsensitive("m.*")
             , invalid("INVALID")).orElseThrow())
         .isInstanceOf(RuntimeException.class);
   }
 
   @Test
   public void matchingStringCaseInsensitive() {
-    Verify.that("blabla").is(MatchCaseInsensitive("blabla")
+    Validate.that("blabla").is(MatchCaseInsensitive("blabla")
         , invalid("INVALID")).orElseThrow();
   }
 
   @Test
   public void matchingStringCaseInsensitiveUpperCase() {
-    Verify.that("blabla").is(MatchCaseInsensitive("BLABLA")
+    Validate.that("blabla").is(MatchCaseInsensitive("BLABLA")
         , invalid("INVALID")).orElseThrow();
   }
 

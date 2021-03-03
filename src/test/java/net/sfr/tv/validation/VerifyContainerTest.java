@@ -16,7 +16,7 @@ public class VerifyContainerTest {
     Bag<String> set = () -> new HashSet<>(Arrays.asList("one", "two", "three"));
     Bag<String> subSet = () -> new HashSet<>(Arrays.asList("one", "two"));
 
-    Verify.that(subSet).is(SubsetOf(set), invalid("INVALID")).orElseThrow();
+    Validate.that(subSet).is(SubsetOf(set), invalid("INVALID")).orElseThrow();
   }
 
   @Test
@@ -24,7 +24,7 @@ public class VerifyContainerTest {
     Bag<String> set = () -> new HashSet<>(Arrays.asList("one", "two", "three"));
     Bag<String> subSet = () -> new HashSet<>(Arrays.asList("one", "two", "three", "four"));
 
-    Assertions.assertThatThrownBy(() -> Verify.that(subSet).is(SubsetOf(set), invalid("INVALID")).orElseThrow())
+    Assertions.assertThatThrownBy(() -> Validate.that(subSet).is(SubsetOf(set), invalid("INVALID")).orElseThrow())
         .isInstanceOf(RuntimeException.class);
   }
 }
