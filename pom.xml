@@ -31,6 +31,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>immutables-annotations</artifactId>
       <scope>provided</scope>
+      <version>0.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.immutables</groupId>
@@ -40,6 +41,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>immutables-exceptions</artifactId>
+      <version>0.0.1</version>
     </dependency>
     <dependency>
       <groupId>io.vavr</groupId>
@@ -52,6 +54,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>nice-mixins</artifactId>
+      <version>0.0.1</version>
     </dependency>
 
     <dependency>
