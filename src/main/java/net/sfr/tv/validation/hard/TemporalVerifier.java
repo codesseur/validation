@@ -39,8 +39,12 @@ public abstract class TemporalVerifier<T extends Temporal & Comparable<T>> exten
     return isLessThanOrEqual(value);
   }
 
-  public OrElse<T> isInWindow(T value, TemporalAmount amount) {
+  public OrElse<T> isAtOrAfter(T value, TemporalAmount amount) {
     return isBetween(value, (T) value.plus(amount));
+  }
+
+  public OrElse<T> isAtOrBefore(T value, TemporalAmount amount) {
+    return isBetween((T) value.minus(amount), value);
   }
 
   @Override
