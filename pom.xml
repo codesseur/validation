@@ -4,7 +4,7 @@
 
   <groupId>com.codesseur</groupId>
   <artifactId>validation</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
 
   <properties>
     <java.version>11</java.version>
