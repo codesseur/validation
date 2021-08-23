@@ -4,7 +4,7 @@
 
   <groupId>com.codesseur</groupId>
   <artifactId>validation</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2-SNAPSHOT</version>
   <name>data-structure</name>
   <description>A useful validation lib</description>
   <url>https://github.com/codesseur/validation</url>
@@ -41,7 +41,7 @@
     <connection>scm:git:git://github.com/codesseur/validation.git</connection>
     <developerConnection>scm:git:git@github.com:codesseur/validation.git</developerConnection>
     <url>https://github.com/codesseur/validation</url>
-    <tag>validation-0.0.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
