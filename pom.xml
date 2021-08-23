@@ -4,7 +4,7 @@
 
   <groupId>com.codesseur</groupId>
   <artifactId>validation</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
 
   <properties>
     <java.version>11</java.version>
@@ -38,7 +38,7 @@
     <connection>scm:git:git://github.com/codesseur/validation.git</connection>
     <developerConnection>scm:git:git@github.com:codesseur/validation.git</developerConnection>
     <url>https://github.com/codesseur/validation</url>
-    <tag>HEAD</tag>
+    <tag>validation-0.0.1</tag>
   </scm>
 
   <distributionManagement>
