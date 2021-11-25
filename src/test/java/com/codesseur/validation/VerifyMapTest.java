@@ -86,7 +86,6 @@ public class VerifyMapTest {
     Verify.that(one).containsKey("k1").otherwiseThrow();
   }
 
-
   @Test
   public void notContainsKeyKo() {
     Assertions.assertThatThrownBy(() -> Verify.that(one).notContainsKey("k1").otherwiseThrow())

@@ -1,10 +1,7 @@
 package com.codesseur.validation;
 
 import com.codesseur.iterate.container.Sequence;
-import com.codesseur.validation.ComparableVerifier;
-import com.codesseur.validation.Failure;
-import com.codesseur.validation.ValidationException;
-import com.codesseur.validation.Verify;
+import com.codesseur.reflect.Type.$;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -130,8 +127,7 @@ public class VerifyObjectTest {
 
   @Test
   public void map() {
-    Verify.that("one").isNotEmpty().map(String::length, ComparableVerifier::me)
-        .isGreaterThan(2).otherwiseThrow();
+    Verify.that("one").isNotEmpty().mapAs(String::length, A::comparable).isGreaterThan(2).otherwiseThrow();
   }
 
   @Test
@@ -148,10 +144,18 @@ public class VerifyObjectTest {
   @Test
   public void otherwiseThrowLast() {
     Assertions.assertThatThrownBy(() -> Verify.that("one")
-        .notIn("one")
-        .otherwise("Bla")
-        .isEmpty()
-        .otherwise("Blou")
+        .notIn("one").otherwise("Bla")
+        .isEmpty().otherwise("Blou")
+        .otherwiseThrowLast(f -> new RuntimeException(f.code())))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Blou");
+  }
+
+  @Test
+  public void instanceOf() {
+    Assertions.assertThatThrownBy(() -> Verify.that((Object) "one")
+        .isInstanceOf($.$(), A::string)
+        .isEmpty().otherwise("Blou")
         .otherwiseThrowLast(f -> new RuntimeException(f.code())))
         .isInstanceOf(RuntimeException.class)
         .hasMessage("Blou");

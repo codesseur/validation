@@ -8,7 +8,7 @@ public abstract class AbstractComparableVerifier<V extends Comparable<V>, S exte
 
   public S isBetween(V start, V end) {
     return isNotNull().then().satisfies(e -> e.compareTo(start) >= 0 && e.compareTo(end) <= 0,
-        () -> Failure.of("NOT_BETWEEN", Tuple.of("start", start), Tuple.of("end", end)));
+        () -> Failures.of("NOT_BETWEEN", Tuple.of("start", start), Tuple.of("end", end)));
   }
 
   public S isGreaterThan(V value) {
@@ -29,6 +29,6 @@ public abstract class AbstractComparableVerifier<V extends Comparable<V>, S exte
 
   public S compare(V value, IntPredicate condition) {
     return isNotNull().then().satisfies(e -> condition.test(e.compareTo(value)), () ->
-        Failure.of("NOT_NULL", Tuple.of("other", value)));
+        Failures.of("NOT_NULL", Tuple.of("other", value)));
   }
 }

@@ -16,16 +16,16 @@ public abstract class AbstractCollectionVerifier<E, C extends Collection<E>, S e
     Verifier<C, S> {
 
   public S isEmpty() {
-    return isNotNull().then().satisfies(Collection::isEmpty, () -> Failure.of("NOT_EMPTY"));
+    return isNotNull().then().satisfies(Collection::isEmpty, () -> Failures.of("NOT_EMPTY"));
   }
 
   public S isNotEmpty() {
-    return isNotNull().then().violates(Collection::isEmpty, () -> Failure.of("EMPTY"));
+    return isNotNull().then().violates(Collection::isEmpty, () -> Failures.of("EMPTY"));
   }
 
   public S hasSize(int size) {
     return isNotNull().then().satisfies(
-        v -> v.size() == size, () -> Failure.of("EMPTY", Tuple.of("size", size)));
+        v -> v.size() == size, () -> Failures.of("EMPTY", Tuple.of("size", size)));
   }
 
   public S isDistinct() {
@@ -39,36 +39,36 @@ public abstract class AbstractCollectionVerifier<E, C extends Collection<E>, S e
         duplicates.add(v2);
         return v1;
       }).count();
-      return v.size() == count ? right(Success.empty()) : left(Failure.of("EMPTY", Tuple.of("duplicates", duplicates)));
+      return v.size() == count ? right(v) : left(Failures.of("EMPTY", Tuple.of("duplicates", duplicates)));
     });
   }
 
   public S nonMatch(Predicate<? super E> matcher) {
-    return isNotNull().then().satisfies(c -> c.stream().noneMatch(matcher), () -> Failure.of("MATCH"));
+    return isNotNull().then().satisfies(c -> c.stream().noneMatch(matcher), () -> Failures.of("MATCH"));
   }
 
   public S allMatch(Predicate<? super E> matcher) {
-    return isNotNull().then().satisfies(c -> c.stream().allMatch(matcher), () -> Failure.of("NOT_ALL_MATCH"));
+    return isNotNull().then().satisfies(c -> c.stream().allMatch(matcher), () -> Failures.of("NOT_ALL_MATCH"));
   }
 
   public S anyMatch(Predicate<? super E> matcher) {
-    return isNotNull().then().satisfies(c -> c.stream().anyMatch(matcher), () -> Failure.of("NONE_MATCH"));
+    return isNotNull().then().satisfies(c -> c.stream().anyMatch(matcher), () -> Failures.of("NONE_MATCH"));
   }
 
   public S contains(E element) {
     return isNotNull().then()
-        .satisfies(c -> c.contains(element), () -> Failure.of("NOT_CONTAINS", Tuple.of("element", element)));
+        .satisfies(c -> c.contains(element), () -> Failures.of("NOT_CONTAINS", Tuple.of("element", element)));
   }
 
   public S notContains(E element) {
     return isNotNull().then()
-        .satisfies(c -> !c.contains(element), () -> Failure.of("CONTAINS", Tuple.of("element", element)));
+        .satisfies(c -> !c.contains(element), () -> Failures.of("CONTAINS", Tuple.of("element", element)));
   }
 
   public S isSubsetOf(Iterable<? extends E> elements) {
     Set<E> set = Streamed.<E>of(elements).toSet();
     return isNotNull().then()
-        .satisfies(set::containsAll, () -> Failure.of("NOT_SUBSET", Tuple.of("elements", elements)));
+        .satisfies(set::containsAll, () -> Failures.of("NOT_SUBSET", Tuple.of("elements", elements)));
   }
 
 }

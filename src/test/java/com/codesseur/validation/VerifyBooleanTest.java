@@ -1,7 +1,5 @@
 package com.codesseur.validation;
 
-import com.codesseur.validation.ValidationException;
-import com.codesseur.validation.Verify;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

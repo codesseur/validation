@@ -4,48 +4,51 @@ import static io.vavr.control.Either.right;
 import static java.util.Collections.emptyList;
 
 import com.codesseur.iterate.container.Sequence;
-import io.vavr.Lazy;
 import io.vavr.control.Either;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.immutables.value.Value.Derived;
 import org.immutables.value.Value.Immutable;
+import org.immutables.value.Value.Lazy;
 
 @Immutable
 public abstract class Conditions<V> implements Sequence<Condition<V>> {
 
-  public static <V> Conditions<V> empty() {
-    return ImmutableConditions.of(emptyList(), Lazy.of(() -> right(Success.empty())));
+  abstract Either<Failures, V> actual();
+
+  public static <V> Conditions<V> success(V previous) {
+    return ImmutableConditions.of(emptyList(), Either.right(previous));
   }
 
-  abstract Lazy<Either<Failures, Success>> previous();
-
-  @Derived
-  public Lazy<Either<Failures, Success>> current() {
-    return Lazy.of(() -> previous().get().flatMap(this::runCurrent));
+  public static <V> Conditions<V> empty(Either<Failures, V> previous) {
+    return ImmutableConditions.of(emptyList(), previous);
   }
 
-  private Either<Failures, Success> runCurrent(Success success) {
-    return map(Condition::run).foldLeft(
-        right(success),
-        (es, e) -> es.mapLeft(fs -> e.fold(fs::add, fs::add)).flatMap(ss -> e.bimap(Failures::of, ss::add)));
+  @Lazy
+  public Either<Failures, V> current() {
+    return actual().flatMap(this::runCurrent);
   }
 
-  public <W> Conditions<W> asPrevious() {
-    return ImmutableConditions.of(emptyList(), current());
+  private Either<Failures, V> runCurrent(V value) {
+    return map(c -> c.run(value))
+        .foldLeft(() -> right(value), (es, e) -> es.mapLeft(fs -> e.fold(fs::add, f -> fs)).flatMap(ss -> e));
+  }
+
+  public <W> Conditions<W> asPrevious(Function<? super V, ? extends W> mapper) {
+    return ImmutableConditions.of(emptyList(), current().map(mapper));
   }
 
   Conditions<V> add(Condition<? extends V> condition) {
     return withValue(append((Condition<V>) condition));
   }
 
-  Conditions<V> withLastFailure(BiFunction<? super V, ? super Failure, Failure> failureMapper) {
-    return mapLast(c -> c.failure(failureMapper)).toListThen(this::withValue);
+  Conditions<V> withLastFailure(BiFunction<? super V, ? super Failure, Failure> mapper) {
+    return mapLast(c -> c.withLastFailure(mapper)).toListThen(this::withValue);
   }
 
-  public <W> Conditions<W> otherwiseThrow(Function<? super Failures, ? extends RuntimeException> otherwise) {
-    current().get().getOrElseThrow(otherwise);
-    return asPrevious();
+  public Conditions<V> otherwiseThrow(Function<? super Failures, ? extends RuntimeException> otherwise) {
+    current().getOrElseThrow(otherwise);
+    return asPrevious(Function.identity());
   }
 
   abstract Conditions<V> withValue(Iterable<? extends Condition<V>> elements);

@@ -3,7 +3,6 @@ package com.codesseur.validation;
 import static java.time.Duration.ofHours;
 import static java.time.Duration.ofSeconds;
 
-import com.codesseur.validation.Verify;
 import java.time.Instant;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -2,9 +2,10 @@ package com.codesseur.validation;
 
 import static io.vavr.control.Either.left;
 import static io.vavr.control.Either.right;
+import static java.util.function.Function.identity;
 
 import com.codesseur.iterate.Streamed;
-import io.vavr.Lazy;
+import com.codesseur.reflect.Type;
 import io.vavr.control.Either;
 import java.util.Arrays;
 import java.util.Objects;
@@ -13,35 +14,38 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import org.immutables.value.Value.Default;
 
-public abstract class Verifier<V, S> {
+public abstract class Verifier<V, S extends Verifier<V, S>> {
 
-  abstract Lazy<? extends V> value();
+  abstract Conditions<V> conditions();
 
-  @Default
-  public Conditions<V> conditions() {
-    return Conditions.empty();
+  public Either<Failures, V> get() {
+    return conditions().current();
   }
 
-  public V get() {
-    return value().get();
+  public <T, SS extends Verifier<T, SS>> SS isInstanceOf(Type<T> type,
+      Function<? super Conditions<T>, ? extends SS> as) {
+    return isInstanceOf(type).as(as);
+  }
+
+  public <T> ObjectVerifier<T> isInstanceOf(Type<T> type) {
+    return satisfies(v -> type.safeCast(v).isPresent(), () -> Failures.of("NOT_EQUAL")).map(type::cast);
   }
 
   public S isEqualTo(V value) {
-    return satisfies(v -> v.equals(value), () -> Failure.of("NOT_EQUAL"));
+    return satisfies(v -> v.equals(value), () -> Failures.of("NOT_EQUAL"));
   }
 
   public S isNotEqualTo(V value) {
-    return violates(v -> v.equals(value), () -> Failure.of("NOT_EQUAL"));
+    return violates(v -> v.equals(value), () -> Failures.of("NOT_EQUAL"));
   }
 
   public S isNull() {
-    return satisfies(Objects::isNull, () -> Failure.of("NOT_NULL"));
+    return satisfies(Objects::isNull, () -> Failures.of("NOT_NULL"));
   }
 
   public S isNotNull() {
-    return satisfies(Objects::nonNull, () -> Failure.of("NULL"));
+    return satisfies(Objects::nonNull, () -> Failures.of("NULL"));
   }
 
   @SafeVarargs
@@ -56,28 +60,32 @@ public abstract class Verifier<V, S> {
 
   public final S isIn(Iterable<? extends V> values) {
     Set<? extends V> set = Streamed.of(values).toSet();
-    return satisfies(set::contains, () -> Failure.of("NOT_IN"));
+    return satisfies(set::contains, () -> Failures.of("NOT_IN"));
   }
 
   public final S notIn(Iterable<? extends V> values) {
     Set<? extends V> set = Streamed.of(values).toSet();
-    return violates(set::contains, () -> Failure.of("IN"));
+    return violates(set::contains, () -> Failures.of("IN"));
   }
 
-  public S violates(Predicate<? super V> condition, Supplier<Failure> failure) {
+  public S violates(Predicate<? super V> condition, Supplier<Failures> failure) {
     return satisfies(condition.negate(), failure);
   }
 
   public S matches(Predicate<? super V> condition) {
-    return satisfies(condition, () -> Failure.of("VALIDATION_ERROR"));
+    return satisfies(condition, () -> Failures.of("VALIDATION_ERROR"));
   }
 
-  public S satisfies(Predicate<? super V> condition, Supplier<Failure> failure) {
-    return satisfies(v -> condition.test(v) ? right(Success.empty()) : left(failure.get()));
+  public S satisfies(Predicate<? super V> condition, Supplier<Failures> failure) {
+    return satisfies(v -> condition.test(v) ? right(v) : left(failure.get()));
   }
 
-  public S satisfies(Function<? super V, Either<Failure, Success>> condition) {
-    return withConditions(conditions().add(ImmutableCondition.of(value(), condition)));
+  public S verify(Function<? super V, Verifier<?, ?>> condition) {
+    return satisfies(v -> condition.apply(v).conditions().current().map(i -> v));
+  }
+
+  public S satisfies(Function<? super V, Either<Failures, V>> condition) {
+    return withConditions(conditions().add(ImmutableCondition.of(condition)));
   }
 
   public S otherwise(String code) {
@@ -108,21 +116,21 @@ public abstract class Verifier<V, S> {
     return withConditions(conditions().otherwiseThrow(otherwise));
   }
 
-  public <SS extends Verifier<V, SS>> SS flatMap(Function<? super Lazy<? extends V>, ? extends SS> as) {
-    return as.apply(value());
+  public <SS extends Verifier<V, SS>> SS as(Function<? super Conditions<V>, ? extends SS> as) {
+    return as.apply(conditions());
   }
 
   public S then() {
-    return withConditions(conditions().asPrevious());
+    return withConditions(conditions().asPrevious(identity()));
   }
 
   public <O> ObjectVerifier<O> map(Function<? super V, ? extends O> mapper) {
-    return ImmutableObjectVerifier.of(value().map(mapper), conditions().asPrevious());
+    return ImmutableObjectVerifier.of(conditions().asPrevious(mapper));
   }
 
-  public <VV, SS extends Verifier<VV, SS>> SS map(Function<? super V, ? extends VV> mapper,
-      Function<? super Lazy<? extends VV>, SS> as) {
-    return this.<VV>map(mapper).flatMap(as);
+  public <VV, SS extends Verifier<VV, SS>> SS mapAs(Function<? super V, ? extends VV> mapper,
+      Function<? super Conditions<VV>, SS> as) {
+    return this.<VV>map(mapper).as(as);
   }
 
   abstract S withConditions(Conditions<V> conditions);

@@ -1,7 +1,6 @@
 package com.codesseur.validation;
 
 import com.codesseur.iterate.container.Sequence;
-import com.codesseur.validation.Verify;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
